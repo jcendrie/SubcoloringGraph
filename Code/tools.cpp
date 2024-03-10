@@ -90,6 +90,20 @@ void write_result(char* real_name, int k, std::vector<float> stat, int n, int m,
     ofs.close();
 }
 
+void result_article(int seed, std::string type, float d, std::string mode, int subch, std::vector<float> score) {
+    std::stringstream name;
+    name << "data/score_" << std::to_string(seed) << "_" << type << "_" << std::to_string(d) << "_" << mode << ".csv";
+    
+    std::ofstream mf;
+    mf.open(name.str());
+    mf << "seed, type, density, mode, subchromatique, idnoeud, score" << '\n';
+    for (size_t i = 0; i < score.size(); i++) {
+        mf << seed << ", " << type << ", " << d << ", " << mode << ", " << subch << ", " << i << ", " << score[i] << '\n';
+    }
+    mf.close();
+}
+
+
 void displayGraph(Graph g, bool visible_edge) {
     property_map< Graph, vertex_index_t >::type vertex_id = get(vertex_index, g);
     property_map< Graph, vertex_color_t >::type color = get(vertex_color, g);

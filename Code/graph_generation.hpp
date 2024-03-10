@@ -16,19 +16,29 @@ typedef graph_traits< Graph >::edge_descriptor edge_desc;
 
 Graph rand_graph_bino(int n, float p);
 
+Graph rand_graph_bino_density(int n, float d);
+
 Graph rand_UDG(int n, float taille_cube);
 
 Graph rand_quasi_UDG(int n, float taille_cube, float dist);
 
+Graph rand_quasi_UDG_density(int n, float d, float dist);
+
 Graph rand_3D(int n, float taille_cube, float dist);
 
-Graph read_coord(std::string name);
+Graph rand_3D_density(int n, float d, float dist);
 
 Graph rand_sbm(int n, int r, float p, float q);
+
+Graph rand_sbm_density(int n, int r, float rpq, float d);
 
 Graph stadium(int n, float l, float larg);
 
 Graph stadiumV2(int n, float taille_cube);
+
+Graph stadium_density(int n, float d, float dist);
+
+Graph read_coord(std::string name);
 
 Graph etoile(int b);
 

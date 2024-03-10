@@ -24,13 +24,13 @@ void usage() {
     std::cout << "  -w / --write nom_fichier : le graphe precedement construit est ecrit dans un fichier nom_fichier.graphml dans le dossier graph." << std::endl;
     std::cout << std::endl;
     std::cout << "  -u / --udg n taille : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un espace de cote taille et en créant le unit disk graph correspondant." << std::endl;
-    std::cout << "  -qu / --quasi_udg n taille dist : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un espace de cote taille et en créant le quasi unit disk graph correspondant, avec des arêtes à proba 1 si la distance entre deux sommets est inférieure à dist et des arêtes avec proba proba qui décroit de manière linéaire" << std::endl;
+    std::cout << "  -qu / --quasi_udg n d dist : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un carre et en créant le quasi unit disk graph correspondant de densite d, avec des arêtes à proba 1 si la distance entre deux sommets est inférieure à dist et des arêtes avec proba proba qui décroit de manière linéaire" << std::endl;
     std::cout << "  -r / --rand n p : utilise un graph d'Erdos Renyi avec n sommets et une probabilité de p (entre 0 et 1) pour les aretes." << std::endl;
-    std::cout << "  -sbm / --stochastic_block_model n r p q : utilise un graphe avec n sommets construit par le Stochastic block model avec r le nombre de communautés, p la proba pour une arête entre membre d'une même communauté et q sinon." << std::endl;
+    std::cout << "  -sbm / --stochastic_block_model n r rpq d : utilise un graphe avec n sommets construit par le Stochastic block model avec r le nombre de communautés, p la proba pour une arête entre membre d'une même communauté et q sinon, trouvée à partir de rpq le rapport de p par q et avec la densité d du graphe." << std::endl;
     std::cout << "  -st / --stadium n long larg : utilise un graphe avec n sommets construits en positionnant de manière régulière des points dans un espace de cote long et larg." << std::endl;
-    std::cout << "  -st2 / --stadiumV2 n taille_cube : utilise un graphe avec n sommets construits en positionnant de manière régulière des points dans un espace de cote taille_cube avec un trou au centre." << std::endl;
+    std::cout << "  -st2 / --stadiumV2 n d dist : utilise un graphe avec n sommets construits en positionnant de manière régulière des points dans un carre avec un trou au centre, de densite d." << std::endl;
     std::cout << "  -et / --etoile b : graphe sous forme d'étoile avec b branches, les branches sont de longueur 2 et sont toutes reliés à un même centre. (n = 2*b+1)" << std::endl;
-    std::cout << "  -3d / --3d_quasi_ucg n taille dist : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un cube de cote taille et en créant le quasi unit circle graph correspondant, avec des arêtes à proba 1 si la distance entre deux sommets est inférieure à dist et des arêtes avec proba proba qui décroit de manière linéaire" << std::endl;
+    std::cout << "  -3d / --3d_quasi_ucg n d dist : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un cube et en créant le quasi unit circle graph correspondant de densite d, avec des arêtes à proba 1 si la distance entre deux sommets est inférieure à dist et des arêtes avec proba proba qui décroit de manière linéaire" << std::endl;
     std::cout << std::endl;
     std::cout << "  -g / --display_graph : affiche le graphe lors des étapes clés." << std::endl;
     std::cout << "  -e / --display_edges : affiche les arêtes lors de l'affichage des graphes." << std::endl;
@@ -61,7 +61,8 @@ void usage() {
 //sbn graph pour cluster séparés par un pont 
 
 int main(int argc, char** argv) {
-    srand (time(NULL));
+    int seed = time(NULL);
+    srand(seed);
     auto start = std::chrono::high_resolution_clock::now();
     Graph g;
     std::string mode = "degree";
@@ -76,6 +77,7 @@ int main(int argc, char** argv) {
     // int min_c = 1;
     char name_in[1000] = "";
     char name_out[1000];
+    std::string type = "";
 
     bool init_graph = false;
     bool write_graph = false;
@@ -145,26 +147,28 @@ int main(int argc, char** argv) {
                 usage();
             }
             int n;
-            float taille_cube;
+            float d;
             float dist;
             sscanf(argv[++i], "%d", &n);
-            sscanf(argv[++i], "%f", &taille_cube);
+            sscanf(argv[++i], "%f", &d);
             sscanf(argv[++i], "%f", &dist);
             if (!init_graph) {
                 init_graph = true;
-                g = rand_quasi_UDG(n, taille_cube, dist);
+                g = rand_quasi_UDG_density(n, d, dist);
+                type = "QUDG";
             }
         } else if ((strcmp(argv[i],"-r")==0) || (strcmp(argv[i],"--rand")==0) ) {
             if (i==argc-2) {
                 usage();
             }
             int n;
-            float p;
+            float d;
             sscanf(argv[++i], "%d", &n);
-            sscanf(argv[++i], "%f", &p);
+            sscanf(argv[++i], "%f", &d);
             if (!init_graph) {            
                 init_graph = true;
-                g = rand_graph_bino(n, p);
+                g = rand_graph_bino_density(n, d);
+                type = "ER";
             }
         } else if ((strcmp(argv[i],"-sbm")==0) || (strcmp(argv[i],"--stochastic_block_model")==0) ) {
             if (i==argc-4) {
@@ -172,15 +176,16 @@ int main(int argc, char** argv) {
             }
             int n;
             int r;
-            float p;
-            float q;
+            float rpq;
+            float d;
             sscanf(argv[++i], "%d", &n);
             sscanf(argv[++i], "%d", &r);
-            sscanf(argv[++i], "%f", &p);
-            sscanf(argv[++i], "%f", &q);
+            sscanf(argv[++i], "%f", &rpq);
+            sscanf(argv[++i], "%f", &d);
             if (!init_graph) {            
                 init_graph = true;
-                g = rand_sbm(n, r, p, q);
+                g = rand_sbm_density(n, r, rpq, d);
+                type = "SBM";
             }
         } else if ((strcmp(argv[i],"-st")==0) || (strcmp(argv[i],"--stadium")==0) ) {
             if (i==argc-3) {
@@ -197,16 +202,19 @@ int main(int argc, char** argv) {
                 g = stadium(n, l, larg);
             }
         } else if ((strcmp(argv[i],"-st2")==0) || (strcmp(argv[i],"--stadiumV2")==0) ) {
-            if (i==argc-2) {
+            if (i==argc-3) {
                 usage();
             }
             int n;
-            float taille_cube;
+            float d;
+            float dist;
             sscanf(argv[++i], "%d", &n);
-            sscanf(argv[++i], "%f", &taille_cube);
+            sscanf(argv[++i], "%f", &d);
+            sscanf(argv[++i], "%f", &dist);
             if (!init_graph) {            
                 init_graph = true;
-                g = stadiumV2(n, taille_cube);
+                g = stadium_density(n, d, dist);
+                type = "ST";
             }
         } else if ((strcmp(argv[i],"-et")==0) || (strcmp(argv[i],"--etoile")==0) ) {
             if (i==argc-1) {
@@ -223,14 +231,15 @@ int main(int argc, char** argv) {
                 usage();
             }
             int n;
-            float taille_cube;
+            float d;
             float dist;
             sscanf(argv[++i], "%d", &n);
-            sscanf(argv[++i], "%f", &taille_cube);
+            sscanf(argv[++i], "%f", &d);
             sscanf(argv[++i], "%f", &dist);
             if (!init_graph) {
                 init_graph = true;
-                g = rand_3D(n, taille_cube, dist);
+                g = rand_3D_density(n, d, dist);
+                type = "QUBG";
             }
         } else if ((strcmp(argv[i],"-g")==0) || (strcmp(argv[i],"--display_graph")==0) ) {
             display_graph = true;
@@ -342,8 +351,8 @@ int main(int argc, char** argv) {
     std::vector<float> score(n, 0);
     Graph g_ori;
     std::stack<vertex_desc> stack_low_degree;
-    int num_change = extract_low_degree_vertex(g, g_ori, stack_low_degree, k_max);
-
+    // int num_change = extract_low_degree_vertex(g, g_ori, stack_low_degree, k_max);
+    int num_change = 0;
     if (num_change != n) {
         if (naive) {
             k = channel_by_arrival(g, k_max);
@@ -359,6 +368,7 @@ int main(int argc, char** argv) {
             if (display_graph) {
                 displayGraph(g, display_edges);
             }
+            result_article(seed, type, m/(float)(n*(n-1)/2), "GCA", 0, score);
         }
 
         if (color_by_markov) {
@@ -465,6 +475,7 @@ int main(int argc, char** argv) {
                 std::vector<float> stat = {sum/float(n), score_tri[0], score_tri[n/4 - 1], score_tri[n/2 - 1], score_tri[3*n/4 - 1], score_tri[n - 1]};
                 write_result(real_name, k_avant_upgrade, stat, n, m, normal);
             }
+            result_article(seed, type, m/(float)(n*(n-1)/2), "SCA", k_avant_upgrade, score);
         }
 
 
@@ -639,6 +650,8 @@ int main(int argc, char** argv) {
     auto stop = std::chrono::high_resolution_clock::now();
  
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
+
  
     std::cout << "Time taken by program : " << (float) duration.count()/1000000 << " seconds" << std::endl;
 

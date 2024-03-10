@@ -24,6 +24,8 @@ void write_Results(char* real_name, int n, float threshold_sub, int k_max_naive,
 
 void write_result(char* real_name, int k, std::vector<float> stat, int n, int m,  bool normal);
 
+void result_article(int seed, std::string type, float d, std::string mode, int subch, std::vector<float> score);
+
 void displayGraph(Graph g, bool visible_edge = false);
 
 void blankgraph(Graph& g);
