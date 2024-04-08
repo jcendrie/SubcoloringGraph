@@ -40,45 +40,40 @@ dffinal <- dfclean %>%
 
 
 
-for (i in 1:4) {
+for (i in 1:2) {
   dftemp1 <- dffinal %>% filter(type == c("QUDG", "QUBG", "ER", "SBM")[i])
-  for (j in 1:2) {
-    dftemp2 <- dftemp1 %>% filter(mode == c("GCA", "SCA")[j])
+  # for (j in 1:2) {
+  #   dftemp2 <- dftemp1 %>% filter(mode == c("GCA", "SCA")[j])
     
-    name = c("QUDG", "QUBG", "ER", "SBM")[i]
-    type = c("GCA", "SCA")[j]
+  name = c("Quasi-Unit Disk Graphs", "Quasi-Unit Balls Graphs", "Erdös-Rényi", "Stochastic Block Models")[i]
+  # type = c("GCA", "SCA")[j]
     
     
-    plot <- ggplot(dftemp2) +
-      geom_line(aes(x=density, y=med), linewidth = 0.8, linetype = 1) +
-      geom_line(aes(x=density, y=firstq), linewidth = 0.6, linetype = 2) +
-      geom_line(aes(x=density, y=lastq), linewidth = 0.6, linetype = 2) +
-      geom_line(aes(x=density, y=firstd), linewidth = 0.4, linetype = 3) +
-      geom_line(aes(x=density, y=lastd), linewidth = 0.4, linetype = 3) +
-      # geom_errorbar( aes(x=density, ymin=firstd, ymax=lastd), width=0.1, colour="orange", alpha=0.9, size=0.8) +
-      ggtitle(paste("Density", name, type, sep=" ")) +
-      labs(x = "density", y = "Pv")
-    # geom_point(cex = 3) +
-    # geom_errorbar(aes(xmin=avggp-sdgp, xmax=avggp+sdgp), linewidth = 0.1, width=.1) +
-    # geom_errorbar(aes(ymin=avgyield-sdyield, ymax=avgyield+sdyield), linewidth = 0.1, width=.1) +
-    # theme(legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.4, 'cm'), legend.text = element_text(size=7)) +
-    # theme(axis.text.x = element_text(size=7)) +
-    # theme(axis.text.y = element_text(size=7)) +
-    # theme(axis.title.x = element_text(size=10)) +
-    # theme(axis.title.y = element_text(size=10)) +
-    # guides(colour=guide_legend(nrow=2)) +
-    # theme(legend.title=element_blank()) +
-    # xlim(0.7, 1) +
+    plot <- ggplot(dftemp1) +
+      geom_line(aes(x=density, y=med, group=mode, color=mode), linewidth = 0.8, linetype = 1) +
+      geom_line(aes(x=density, y=firstq, group=mode, color=mode), linewidth = 0.6, linetype = 2) +
+      geom_line(aes(x=density, y=lastq, group=mode, color=mode), linewidth = 0.6, linetype = 2) +
+      geom_line(aes(x=density, y=firstd, group=mode, color=mode), linewidth = 0.4, linetype = 3) +
+      geom_line(aes(x=density, y=lastd, group=mode, color=mode), linewidth = 0.4, linetype = 3)
     
-    pdf(paste("../Figure/density_", name, "_", type ,".pdf", sep=""), width = 4.5, height = 2.5)
+    plot <- plot +
+      scale_color_manual(name="Heuristics: ", values=c("forestgreen", "red"),labels=c("Greedy Channel Assignement","Subcoloring Channel Assignement")) +
+      # scale_shape_manual(name = "Lines", breaks = c("linetype", "linetype", "linetype"), values=c(1, 2, 3),labels=c("Mediane","Quartile", "Decile")) +
+      theme(legend.position="top", legend.box="vertical") +
+      labs(x = "Density", y = "Pv")
+    
+      
+    plot <- plot + ggtitle(paste("Density", name, sep=" ")) +
+
+    pdf(paste("../Figure/density_", name, ".pdf", sep=""), width = 6, height = 4)
     print(plot)
     dev.off()
     
-    tikz(file = sprintf(paste("../Figure/density_", name, "_", type ,".tex", sep="")), width = 4.5, height = 2.5)
+    tikz(file = sprintf(paste("../Figure/density_", name, ".tex", sep="")), width = 6, height = 4)
     print(plot)
     dev.off()
     
-  }
+
 }
 
 

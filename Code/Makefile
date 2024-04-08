@@ -34,48 +34,48 @@ readml.o:
 target_qudg: subcol.out
 	for densite1 in 0 1 2 3 4 5 6 7 8 9 ; do \
 		for densite2 in 0 1 2 3 4 5 6 7 8 9 ; do \
-			./subcol.out -nv -m degree -k 23 -nr 23 -markov -qu 1000 0.1 0.7 ; \
-			for number1 in 0 1 ; do \
-				./subcol.out -nv -m degree -k 23 -nr 23 -markov -qu 1000 0.$$densite1$$densite2 0.7 ; \
-		   		echo $$densite1$$densite2$$number1; \
-		   		sleep 1; \
-		   	done \
+			./subcol.out -nv -m degree -k 23 -nr 23 -markov -qu 1000 0.08 0.7 ; \
+# 			for number1 in 0 1 ; do \
+# 				./subcol.out -nv -m degree -k 23 -nr 23 -markov -qu 1000 0.$$densite1$$densite2 0.7 ; \
+# 		   		echo $$densite1$$densite2$$number1; \
+# 		   		sleep 1; \
+# 		   	done \
 		done \
 	done 
 
 target_qubg: subcol.out
 	for densite1 in 0 1 2 3 4 5 6 7 8 9 ; do \
 		for densite2 in 0 1 2 3 4 5 6 7 8 9 ; do \
-			./subcol.out -nv -m degree -k 23 -nr 23 -markov -3d 1000 0.1 0.7 ; \
-			for number1 in 0 1 ; do \
-				./subcol.out -nv -m degree -k 23 -nr 23 -markov -3d 1000 0.$$densite1$$densite2 0.7 ; \
-		   		echo $$densite1$$densite2$$number1; \
-		   		sleep 1; \
-		   	done \
+			./subcol.out -nv -m degree -k 23 -nr 23 -markov -3d 1000 0.08 0.7 ; \
+# 			for number1 in 0 1 ; do \
+# 				./subcol.out -nv -m degree -k 23 -nr 23 -markov -3d 1000 0.$$densite1$$densite2 0.7 ; \
+# 		   		echo $$densite1$$densite2$$number1; \
+# 		   		sleep 1; \
+# 		   	done \
 		done \
 	done 
 
 target_er: subcol.out
 	for densite1 in 0 1 2 3 4 5 6 7 8 9 ; do \
 		for densite2 in 0 1 2 3 4 5 6 7 8 9 ; do \
-			./subcol.out -nv -m degree -k 23 -nr 23 -markov -r 1000 0.1 ; \
-			for number1 in 0 1 ; do \
-				./subcol.out -nv -m degree -k 23 -nr 23 -markov -r 1000 0.$$densite1$$densite2 ; \
-		   		echo $$densite1$$densite2$$number1; \
-		   		sleep 1; \
-		   	done \
+			./subcol.out -nv -m degree -k 23 -nr 23 -markov -r 1000 0.08 ; \
+# 			for number1 in 0 1 ; do \
+# 				./subcol.out -nv -m degree -k 23 -nr 23 -markov -r 1000 0.$$densite1$$densite2 ; \
+# 		   		echo $$densite1$$densite2$$number1; \
+# 		   		sleep 1; \
+# 		   	done \
 		done \
 	done 
 
 target_sbm: subcol.out
 	for densite1 in 0 1 2 3 4 5 6 7 8 9 ; do \
 		for densite2 in 0 1 2 3 4 5 6 7 8 9 ; do \
-			./subcol.out -nv -m degree -k 23 -nr 23 -markov -sbm 1000 50 10 0.1 ; \
-			for number1 in 0 1 ; do \
-				./subcol.out -nv -m degree -k 23 -nr 23 -markov -sbm 1000 50 10 0.$$densite1$$densite2 ; \
-		   		echo $$densite1$$densite2$$number1; \
-		   		sleep 1; \
-		   	done \
+			./subcol.out -nv -m degree -k 23 -nr 23 -markov -sbm 1000 50 10 0.08 ; \
+# 			for number1 in 0 1 ; do \
+# 				./subcol.out -nv -m degree -k 23 -nr 23 -markov -sbm 1000 50 10 0.$$densite1$$densite2 ; \
+# 		   		echo $$densite1$$densite2$$number1; \
+# 		   		sleep 1; \
+# 		   	done \
 		done \
 	done 
 

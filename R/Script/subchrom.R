@@ -18,7 +18,7 @@ df <- as.data.frame(unclass(df))
 
 df$density <- as.double(as.integer(df$density*100+0.1))/100.
 
-dfclean <- df %>% filter(mode == "SCA") %>% select(seed, type, density, subchromatique)
+dfclean <- df %>% filter(mode == "SCA") %>% filter(type != "ST") %>% select(seed, type, density, subchromatique)
 
 dffinal <- dfclean %>%
   group_by(seed, type, density) %>%
@@ -26,16 +26,19 @@ dffinal <- dfclean %>%
     mean=mean(subchromatique),
   )
 
+for (i in 1:2) {
+  
   plot <- ggplot(dffinal) +
       geom_line( aes(x=density, y=mean, group=type, colour=type), linewidth = 0.8, linetype = 1) +
       geom_hline(yintercept=23, linetype = 2, color="purple", size = 0.8) +
-      scale_y_continuous(breaks = c(23, 30, 60, 90)) +
-      ggtitle("Subchromatique") +
-      labs(x = "Density", y = "Nb Subchromatique")
+      scale_color_discrete(name="Types of graph generation:", breaks=c("QUDG", "QUBG", "ER", "SBM"), labels=c("Quasi-Unit Disk Graphs", "Quasi-Unit Balls Graphs", "Erdös-Rényi", "Stochastic Block Models")) +
+      ggtitle("Subchromatic number based on density for different types of graph generation") +
+      labs(x = "Density", y = "Subchromatic number", legends= "Types of graph generation:") +
+      guides(color=guide_legend(nrow=2)) +
+      theme(legend.position="top", legend.box="vertical")
     # geom_point(cex = 3) +
     # geom_errorbar(aes(xmin=avggp-sdgp, xmax=avggp+sdgp), linewidth = 0.1, width=.1) +
     # geom_errorbar(aes(ymin=avgyield-sdyield, ymax=avgyield+sdyield), linewidth = 0.1, width=.1) +
-    # theme(legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.4, 'cm'), legend.text = element_text(size=7)) +
     # theme(axis.text.x = element_text(size=7)) +
     # theme(axis.text.y = element_text(size=7)) +
     # theme(axis.title.x = element_text(size=10)) +
@@ -43,15 +46,28 @@ dffinal <- dfclean %>%
     # guides(colour=guide_legend(nrow=2)) +
     # theme(legend.title=element_blank()) +
     # xlim(0.7, 1) +
-    
-    pdf(paste("../Figure/subchrom.pdf", sep=""), width = 4.5, height = 2.5)
-    print(plot)
-    dev.off()
-    
-    tikz(file = sprintf(paste("../Figure/subchrom.tex", sep="")), width = 4.5, height = 2.5)
-    print(plot)
-    dev.off()
   
+    if (i == 1) {
+      plot <- plot + scale_y_continuous(breaks = c(23, 30, 60, 90))
+      pdf(paste("../Figure/subchrom.pdf", sep=""), width = 8, height = 4)
+      print(plot)
+      dev.off()
+      
+      tikz(file = sprintf(paste("../Figure/subchrom.tex", sep="")), width = 8, height = 4)
+      print(plot)
+      dev.off()
+    } else {
+      plot <- plot + xlim(0, 0.3) + scale_y_continuous(breaks = c(23, 30, 60), limits = c(0,65))
+      pdf(paste("../Figure/subchrom_frag.pdf", sep=""), width = 8, height = 4)
+      print(plot)
+      dev.off()
+      
+      tikz(file = sprintf(paste("../Figure/subchrom_frag.tex", sep="")), width = 8, height = 4)
+      print(plot)
+      dev.off()
+    }
+}
+
 
 
 
