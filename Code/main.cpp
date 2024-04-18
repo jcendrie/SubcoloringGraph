@@ -368,7 +368,7 @@ int main(int argc, char** argv) {
             if (display_graph) {
                 displayGraph(g, display_edges);
             }
-            result_article(seed, type, m/(float)(n*(n-1)/2), "GCA", 0, score);
+            // result_article(seed, type, m/(float)(n*(n-1)/2), "GCA", 0, score);
         }
 
         if (color_by_markov) {
@@ -475,7 +475,7 @@ int main(int argc, char** argv) {
                 std::vector<float> stat = {sum/float(n), score_tri[0], score_tri[n/4 - 1], score_tri[n/2 - 1], score_tri[3*n/4 - 1], score_tri[n - 1]};
                 write_result(real_name, k_avant_upgrade, stat, n, m, normal);
             }
-            result_article(seed, type, m/(float)(n*(n-1)/2), "SCA", k_avant_upgrade, score);
+            // result_article(seed, type, m/(float)(n*(n-1)/2), "SCA", k_avant_upgrade, score);
         }
 
 

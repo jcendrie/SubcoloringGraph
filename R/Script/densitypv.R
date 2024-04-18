@@ -57,19 +57,19 @@ for (i in 1:2) {
       geom_line(aes(x=density, y=lastd, group=mode, color=mode), linewidth = 0.4, linetype = 3)
     
     plot <- plot +
-      scale_color_manual(name="Heuristics: ", values=c("forestgreen", "red"),labels=c("Greedy Channel Assignement","Subcoloring Channel Assignement")) +
+      scale_color_manual(name="", values=c("forestgreen", "red"),labels=c("GCA","SCA")) +
       # scale_shape_manual(name = "Lines", breaks = c("linetype", "linetype", "linetype"), values=c(1, 2, 3),labels=c("Mediane","Quartile", "Decile")) +
-      theme(legend.position="top", legend.box="vertical") +
+      theme(legend.position="top", legend.box="vertical", panel.background = element_rect(fill="white"), panel.grid = element_blank()) +
       labs(x = "Density", y = "Pv")
     
       
-    plot <- plot + ggtitle(paste("Density", name, sep=" ")) +
+    plot <- plot + ggtitle(paste("Density", name, sep=" "))
 
-    pdf(paste("../Figure/density_", name, ".pdf", sep=""), width = 6, height = 4)
+    pdf(paste("../Figure/density_", name, ".pdf", sep=""), width = 5, height = 4)
     print(plot)
     dev.off()
     
-    tikz(file = sprintf(paste("../Figure/density_", name, ".tex", sep="")), width = 6, height = 4)
+    tikz(file = sprintf(paste("../Figure/density_", name, ".tex", sep="")), width = 5, height = 4)
     print(plot)
     dev.off()
     

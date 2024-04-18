@@ -28,6 +28,8 @@ dfgroup <- dfclean %>% mutate(groupe=as.integer(as.integer(dfclean$score*100 + 9
   group_by(seed, type, mode, groupe) %>%
   summarise(nb=n())
 
+
+
 # Calculates mean, sd, se and IC (Standard Deviation, Standard Error, Confidence Interval)
 dffinal <- dfgroup %>%
   group_by(type, mode, groupe) %>%
@@ -81,11 +83,11 @@ for (i in 1:4) {
     
     plot <- ggplot(dftemp1) +
       geom_bar( aes(x=groupe, y=mean), stat="identity", fill=colors, alpha=0.5) +
-      geom_errorbar( aes(x=groupe, ymin=mean-sd, ymax=mean+sd), width=0.04, colour="orange", alpha=0.9, linewidth=0.6) +
-      ggtitle(paste("Histogramme", name, sep=" ")) +
+      geom_errorbar( aes(x=groupe, ymin=mean-sd, ymax=mean+sd), width=0.04, colour="black", alpha=0.9, linewidth=0.6) +
+      ggtitle(paste("Histogram", name, sep=" ")) +
       scale_x_continuous(breaks = seq(0, 1, by = 0.1), limits = c(-0.075, 1.075)) +
-      theme(legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.4, 'cm'), legend.text = element_text(size=7)) +
-      labs(x = "Pv", y = "Nb", legends="Heuristics: ")
+      theme(legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.4, 'cm'), legend.text = element_text(size=7), panel.background = element_rect(fill="white"), panel.grid = element_blank()) +
+      labs(x = "Pv", y = "Proportion", legends="")
     # geom_point(cex = 3) +
     # geom_errorbar(aes(xmin=avggp-sdgp, xmax=avggp+sdgp), linewidth = 0.1, width=.1) +
     # geom_errorbar(aes(ymin=avgyield-sdyield, ymax=avgyield+sdyield), linewidth = 0.1, width=.1) +
@@ -97,11 +99,11 @@ for (i in 1:4) {
     # theme(legend.title=element_blank()) +
     # xlim(0.7, 1) +
 
-    pdf(paste("../Figure/histo_", name, ".pdf", sep=""), width = 6, height = 4)
+    pdf(paste("../Figure/histo_", name, ".pdf", sep=""), width = 5, height = 3.5)
     print(plot)
     dev.off()
     
-    tikz(file = sprintf(paste("../Figure/histo_", name, ".tex", sep="")), width = 6, height = 4)
+    tikz(file = sprintf(paste("../Figure/histo_", name, ".tex", sep="")), width = 5, height = 3.5)
     print(plot)
     dev.off()
     
@@ -112,7 +114,7 @@ dflegend <- dfnormal %>% group_by(mode) %>% summarise(mean=mean(mean), groupe=me
 thelegendasaggplot <- ggplot(dflegend, aes(x=groupe, fill = mode)) + 
   geom_histogram(alpha = 0.5) + 
   theme(legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.4, 'cm'), legend.text = element_text(size=7)) +
-  scale_fill_manual(name="Heuristics: ", values=c("forestgreen","red"),labels=c("Greedy Channel Assignement","Subcoloring Channel Assignement"))
+  scale_fill_manual(name="", values=c("forestgreen","red"),labels=c("GCA","SCA"))
 
 thelegendasagtable <- get_legend(thelegendasaggplot)
 #Convert to a ggplot and print
@@ -120,7 +122,7 @@ thelegendasaggplot <- as_ggplot(thelegendasagtable)
 pdf(paste("../Figure/histo_legend.pdf", sep=""), width = 8, height = 0.5)
 print(thelegendasaggplot)
 dev.off()
-tikz(file = sprintf(paste("../Figure/histo_legend.tex", sep="")), width = 6, height = 0.5)
+tikz(file = sprintf(paste("../Figure/histo_legend.tex", sep="")), width = 5, height = 0.5)
 print(thelegendasaggplot)
 dev.off()
 
