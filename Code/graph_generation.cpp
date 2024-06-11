@@ -123,6 +123,83 @@ Graph rand_quasi_UDG(int n, float taille_cube, float dist) {
     return g;
 }
 
+Graph rand_UDG_density(int n, float d) {
+    Graph g(n);
+
+    std::vector<std::vector<float>> nodes;
+    for (int i = 0; i < n; i++) {
+        float x = (float)(rand()%10000) / 10000;
+        float y = (float)(rand()%10000) / 10000;
+        nodes.push_back({x, y});
+    }
+
+    std::vector<std::vector<float>> tab_dist;
+    for (int i = 0; i < n; i++) {
+        std::vector<float> temp(n, 0);
+        tab_dist.push_back(temp);
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = i+1; j < n; j++) {
+            std::vector<float> xy1 = nodes[i];
+            std::vector<float> xy2 = nodes[j];
+            float temp_dist = std::sqrt((xy1[0] - xy2[0])*(xy1[0] - xy2[0]) + (xy1[1] - xy2[1])*(xy1[1] - xy2[1]));
+            tab_dist[i][j] = temp_dist;
+            tab_dist[j][i] = tab_dist[i][j];
+        }
+    }
+    std::vector<std::vector<bool>> tab_e;
+    for (int i = 0; i < n; i++) {
+        std::vector<bool> temp(n, false);
+        tab_e.push_back(temp);
+    }
+    
+    int nb_e = (int) ((n*(n-1))/2)*d;
+    float pmin = 0;
+    float pmax = 2;
+    float eps = 0.000001;
+    int nb_re = 0;
+    while(nb_re != nb_e && pmax-pmin > eps) {
+        float p = (pmin+pmax)/2;
+        nb_re = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i+1; j < n; j++) {
+                if (tab_dist[i][j] < p) {
+                    tab_e[i][j] = true;
+                    tab_e[j][i] = true;
+                    nb_re++;
+                } else {
+                    tab_e[i][j] = false;
+                    tab_e[j][i] = false;                    
+                }
+            }
+        }
+        if (nb_re > nb_e) {
+            pmax = p;
+        }
+        if (nb_re < nb_e) {
+            pmin = p;
+        }
+    }
+    std::pair< vertex_iter, vertex_iter > vp;
+    int i = 0;
+    for (vp = vertices(g); vp.first != vp.second; vp.first++) {
+        std::pair< vertex_iter, vertex_iter > vp2 = vp;
+        int j = i+1;
+        for (vp2.first++; vp2.first != vp2.second; vp2.first++) {
+            if (tab_e[i][j]) {
+
+                graph_traits< Graph >::edge_descriptor e;
+                bool inserted;
+                tie(e, inserted) = add_edge(*vp.first, *vp2.first, g);
+            }
+            j++;
+        }
+        i++;
+    }
+    std::cout << "Construction of the graph (" << num_vertices(g) << ", " << num_edges(g) << ") complete" << std::endl;
+    return g;
+}
+
 Graph rand_quasi_UDG_density(int n, float d, float dist) {
     Graph g(n);
 
@@ -225,6 +302,84 @@ Graph rand_3D(int n, float taille_cube, float dist) {
                 tie(e, inserted) = add_edge(*vp.first, *vp2.first, g);
             }
         }
+    }
+    std::cout << "Construction of the graph (" << num_vertices(g) << ", " << num_edges(g) << ") complete" << std::endl;
+    return g;
+}
+
+Graph rand_ubg_density(int n, float d) {
+    Graph g(n);
+
+    std::vector<std::vector<float>> nodes;
+    for (int i = 0; i < n; i++) {
+        float x = (float)(rand()%10000) / 10000;
+        float y = (float)(rand()%10000) / 10000;
+        float z = (float)(rand()%10000) / 10000;
+        nodes.push_back({x, y, z});
+    }
+
+    std::vector<std::vector<float>> tab_dist;
+    for (int i = 0; i < n; i++) {
+        std::vector<float> temp(n, 0);
+        tab_dist.push_back(temp);
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = i+1; j < n; j++) {
+            std::vector<float> xyz1 = nodes[i];
+            std::vector<float> xyz2 = nodes[j];
+            float temp_dist = std::sqrt((xyz1[0] - xyz2[0])*(xyz1[0] - xyz2[0]) + (xyz1[1] - xyz2[1])*(xyz1[1] - xyz2[1]) + (xyz1[2] - xyz2[2])*(xyz1[2] - xyz2[2]));
+            tab_dist[i][j] = temp_dist;
+            tab_dist[j][i] = tab_dist[i][j];
+        }
+    }
+    std::vector<std::vector<bool>> tab_e;
+    for (int i = 0; i < n; i++) {
+        std::vector<bool> temp(n, false);
+        tab_e.push_back(temp);
+    }
+    
+    int nb_e = (int) ((n*(n-1))/2)*d;
+    float pmin = 0;
+    float pmax = 2;
+    float eps = 0.000001;
+    int nb_re = 0;
+    while(nb_re != nb_e && pmax-pmin > eps) {
+        float p = (pmin+pmax)/2;
+        nb_re = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i+1; j < n; j++) {
+                if (tab_dist[i][j] < p) {
+                    tab_e[i][j] = true;
+                    tab_e[j][i] = true;
+                    nb_re++;
+                } else {
+                    tab_e[i][j] = false;
+                    tab_e[j][i] = false;                    
+                }
+            }
+        }
+        if (nb_re > nb_e) {
+            pmax = p;
+        }
+        if (nb_re < nb_e) {
+            pmin = p;
+        }
+    }
+    std::pair< vertex_iter, vertex_iter > vp;
+    int i = 0;
+    for (vp = vertices(g); vp.first != vp.second; vp.first++) {
+        std::pair< vertex_iter, vertex_iter > vp2 = vp;
+        int j = i+1;
+        for (vp2.first++; vp2.first != vp2.second; vp2.first++) {
+            if (tab_e[i][j]) {
+
+                graph_traits< Graph >::edge_descriptor e;
+                bool inserted;
+                tie(e, inserted) = add_edge(*vp.first, *vp2.first, g);
+            }
+            j++;
+        }
+        i++;
     }
     std::cout << "Construction of the graph (" << num_vertices(g) << ", " << num_edges(g) << ") complete" << std::endl;
     return g;

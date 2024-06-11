@@ -31,6 +31,30 @@ readml.o:
 	g++ -Wall -I "$(localisation_boost)boost_1_81_0/" -c "$(localisation_boost)boost_1_81_0/libs/graph/src/graphml.cpp" -o readml.o
 
 
+target_udg: subcol.out
+	for densite1 in 0 1 2 3 4 5 6 7 8 9 ; do \
+		for densite2 in 0 1 2 3 4 5 6 7 8 9 ; do \
+			./subcol.out -nv -m degree -k 23 -nr 23 -markov -u 1000 0.08 ; \
+ 			for number1 in 0 1 ; do \
+ 				./subcol.out -nv -m degree -k 23 -nr 23 -markov -u 1000 0.$$densite1$$densite2 ; \
+ 		   		echo $$densite1$$densite2$$number1; \
+ 		   		sleep 1; \
+ 		   	done \
+		done \
+	done 
+
+target_ubg: subcol.out
+	for densite1 in 0 1 2 3 4 5 6 7 8 9 ; do \
+		for densite2 in 0 1 2 3 4 5 6 7 8 9 ; do \
+			./subcol.out -nv -m degree -k 23 -nr 23 -markov -ubg 1000 0.08 ; \
+ 			for number1 in 0 1 ; do \
+ 				./subcol.out -nv -m degree -k 23 -nr 23 -markov -ubg 1000 0.$$densite1$$densite2 ; \
+ 		   		echo $$densite1$$densite2$$number1; \
+ 		   		sleep 1; \
+ 		   	done \
+		done \
+	done 
+
 target_qudg: subcol.out
 	for densite1 in 0 1 2 3 4 5 6 7 8 9 ; do \
 		for densite2 in 0 1 2 3 4 5 6 7 8 9 ; do \

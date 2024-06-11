@@ -61,8 +61,8 @@ color1 <- "forestgreen"
 color2 <- "red"
 
 
-for (i in 1:4) {
-  dftemp1 <- dfnormal %>% filter(type == c("QUDG", "QUBG", "ER", "SBM")[i])
+for (i in 1:6) {
+  dftemp1 <- dfnormal %>% filter(type == c("UDG", "UBG", "QUDG", "QUBG", "ER", "SBM")[i])
   colors <- c()
   for (j in 0:10) {
     if (Reduce("|", dftemp1$groupe==toString(-0.02+j*0.1))) {
@@ -77,17 +77,23 @@ for (i in 1:4) {
   # for (j in 1:2) {
     # dftemp2 <- dftemp1 %>% filter(mode == c("GCA", "SCA")[j]) 
     
-    name = c("Quasi-Unit Disk Graphs", "Quasi-Unit Balls Graphs", "Erdös-Rényi", "Stochastic Block Models")[i]
+    name = c("Unit Disk Graphs", "Unit Balls Graphs", "Quasi-Unit Disk Graphs", "Quasi-Unit Balls Graphs", "Erdös-Rényi", "Stochastic Block Models")[i]
     # type = c("GCA", "SCA")[j]
     
     
     plot <- ggplot(dftemp1) +
       geom_bar( aes(x=groupe, y=mean), stat="identity", fill=colors, alpha=0.5) +
       geom_errorbar( aes(x=groupe, ymin=mean-sd, ymax=mean+sd), width=0.04, colour="black", alpha=0.9, linewidth=0.6) +
-      ggtitle(paste("Histogram", name, sep=" ")) +
+      # ggtitle(paste("Histogram", name, sep=" ")) +
+      ggtitle("") +
       scale_x_continuous(breaks = seq(0, 1, by = 0.1), limits = c(-0.075, 1.075)) +
-      theme(legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.4, 'cm'), legend.text = element_text(size=7), panel.background = element_rect(fill="white"), panel.grid = element_blank()) +
-      labs(x = "Pv", y = "Proportion", legends="")
+      theme(legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.8, 'cm'), legend.text = element_text(size=7), axis.title = element_text(size=15), axis.text = element_text(size=10), panel.background = element_rect(fill="white"), 
+            panel.grid.major = element_line(color = "grey", size = 0.25, linetype = 1),
+            axis.line = element_line(arrow = arrow(angle = 30,
+                                                   length = unit(0.2, "cm"),
+                                                   ends = "last", 
+                                                   type = "closed"), color = "black", size = 0.5, linetype = 1)) +
+      labs(x = "$p_v$", y = "Proportion", legends="")
     # geom_point(cex = 3) +
     # geom_errorbar(aes(xmin=avggp-sdgp, xmax=avggp+sdgp), linewidth = 0.1, width=.1) +
     # geom_errorbar(aes(ymin=avgyield-sdyield, ymax=avgyield+sdyield), linewidth = 0.1, width=.1) +
@@ -113,7 +119,7 @@ for (i in 1:4) {
 dflegend <- dfnormal %>% group_by(mode) %>% summarise(mean=mean(mean), groupe=mean(groupe))
 thelegendasaggplot <- ggplot(dflegend, aes(x=groupe, fill = mode)) + 
   geom_histogram(alpha = 0.5) + 
-  theme(legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.4, 'cm'), legend.text = element_text(size=7)) +
+  theme(legend.key = element_rect(fill = "white"), legend.position="top", legend.box="vertical", legend.margin=margin(), legend.key.size = unit(0.8, 'cm'), legend.text = element_text(size=7), axis.title = element_text(size=15), axis.text = element_text(size=10)) +
   scale_fill_manual(name="", values=c("forestgreen","red"),labels=c("GCA","SCA"))
 
 thelegendasagtable <- get_legend(thelegendasaggplot)

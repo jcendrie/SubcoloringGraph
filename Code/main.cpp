@@ -23,13 +23,14 @@ void usage() {
     std::cout << "  -c / --coord nom_fichier : utilise le graphe en .txt a l'adresse nom_fichier avec des coordonnés (x y) des ap et une portée." << std::endl;
     std::cout << "  -w / --write nom_fichier : le graphe precedement construit est ecrit dans un fichier nom_fichier.graphml dans le dossier graph." << std::endl;
     std::cout << std::endl;
-    std::cout << "  -u / --udg n taille : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un espace de cote taille et en créant le unit disk graph correspondant." << std::endl;
+    std::cout << "  -u / --udg n dist : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un espace de cote taille et en créant le unit disk graph correspondant." << std::endl;
     std::cout << "  -qu / --quasi_udg n d dist : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un carre et en créant le quasi unit disk graph correspondant de densite d, avec des arêtes à proba 1 si la distance entre deux sommets est inférieure à dist et des arêtes avec proba proba qui décroit de manière linéaire" << std::endl;
     std::cout << "  -r / --rand n p : utilise un graph d'Erdos Renyi avec n sommets et une probabilité de p (entre 0 et 1) pour les aretes." << std::endl;
     std::cout << "  -sbm / --stochastic_block_model n r rpq d : utilise un graphe avec n sommets construit par le Stochastic block model avec r le nombre de communautés, p la proba pour une arête entre membre d'une même communauté et q sinon, trouvée à partir de rpq le rapport de p par q et avec la densité d du graphe." << std::endl;
     std::cout << "  -st / --stadium n long larg : utilise un graphe avec n sommets construits en positionnant de manière régulière des points dans un espace de cote long et larg." << std::endl;
     std::cout << "  -st2 / --stadiumV2 n d dist : utilise un graphe avec n sommets construits en positionnant de manière régulière des points dans un carre avec un trou au centre, de densite d." << std::endl;
     std::cout << "  -et / --etoile b : graphe sous forme d'étoile avec b branches, les branches sont de longueur 2 et sont toutes reliés à un même centre. (n = 2*b+1)" << std::endl;
+    std::cout << "  -ubg / --unit_ball_graph n d : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un cube et en créant le quasi unit circle graph correspondant de densite d, avec des arêtes à proba 1 si la distance entre deux sommets est inférieure à 1" << std::endl;
     std::cout << "  -3d / --3d_quasi_ucg n d dist : utilise un graphe avec n sommets construit en positionnant aleatoirement n points dans un cube et en créant le quasi unit circle graph correspondant de densite d, avec des arêtes à proba 1 si la distance entre deux sommets est inférieure à dist et des arêtes avec proba proba qui décroit de manière linéaire" << std::endl;
     std::cout << std::endl;
     std::cout << "  -g / --display_graph : affiche le graphe lors des étapes clés." << std::endl;
@@ -135,12 +136,13 @@ int main(int argc, char** argv) {
                 usage();
             }
             int n;
-            float taille_cube;
+            float d;
             sscanf(argv[++i], "%d", &n);
-            sscanf(argv[++i], "%f", &taille_cube);
+            sscanf(argv[++i], "%f", &d);
             if (!init_graph) {            
                 init_graph = true;
-                g = rand_UDG(n, taille_cube);
+                g = rand_UDG_density(n, d);
+                type = "UDG";
             }
         } else if ((strcmp(argv[i],"-qu")==0) || (strcmp(argv[i],"--quasi_udg")==0) ) {
             if (i==argc-3) {
@@ -225,6 +227,19 @@ int main(int argc, char** argv) {
             if (!init_graph) {            
                 init_graph = true;
                 g = etoile(b);
+            }
+        } else if ((strcmp(argv[i],"-ubg")==0) || (strcmp(argv[i],"--unit_ball_graph")==0) ) {
+            if (i==argc-2) {
+                usage();
+            }
+            int n;
+            float d;
+            sscanf(argv[++i], "%d", &n);
+            sscanf(argv[++i], "%f", &d);
+            if (!init_graph) {
+                init_graph = true;
+                g = rand_ubg_density(n, d);
+                type = "UBG";
             }
         } else if ((strcmp(argv[i],"-3d")==0) || (strcmp(argv[i],"--3d_quasi_ucg")==0) ) {
             if (i==argc-3) {
@@ -368,7 +383,7 @@ int main(int argc, char** argv) {
             if (display_graph) {
                 displayGraph(g, display_edges);
             }
-            // result_article(seed, type, m/(float)(n*(n-1)/2), "GCA", 0, score);
+            result_article(seed, type, m/(float)(n*(n-1)/2), "GCA", 0, score);
         }
 
         if (color_by_markov) {
@@ -475,7 +490,7 @@ int main(int argc, char** argv) {
                 std::vector<float> stat = {sum/float(n), score_tri[0], score_tri[n/4 - 1], score_tri[n/2 - 1], score_tri[3*n/4 - 1], score_tri[n - 1]};
                 write_result(real_name, k_avant_upgrade, stat, n, m, normal);
             }
-            // result_article(seed, type, m/(float)(n*(n-1)/2), "SCA", k_avant_upgrade, score);
+            result_article(seed, type, m/(float)(n*(n-1)/2), "SCA", k_avant_upgrade, score);
         }
 
 

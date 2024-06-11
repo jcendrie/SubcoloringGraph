@@ -20,11 +20,15 @@ Graph rand_graph_bino_density(int n, float d);
 
 Graph rand_UDG(int n, float taille_cube);
 
+Graph rand_UDG_density(int n, float d);
+
 Graph rand_quasi_UDG(int n, float taille_cube, float dist);
 
 Graph rand_quasi_UDG_density(int n, float d, float dist);
 
 Graph rand_3D(int n, float taille_cube, float dist);
+
+Graph rand_ubg_density(int n, float d);
 
 Graph rand_3D_density(int n, float d, float dist);
 
