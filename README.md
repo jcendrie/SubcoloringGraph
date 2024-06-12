@@ -39,3 +39,7 @@ Aide :
 
 -t / --test replica threshold_sub k_max_naive k_max : construit la courbe des performance moyenne des sommets du graphe lors du ns avec les parametres threshold_sub i allant de 0 à k_max_naive et k_max, le tout avec replica replications pour construire chaque points.
 -save / --save_result : enregistre les résultats à l'endroit prévu pour cela
+
+
+
+Conçu et codé par Joachim Cendrier lors d'un stage de M2 dans les équipes Hownet et MC2 du LIP à l'ENS de Lyon, encadré par Thomas Begin, Anthony Busson et Rémi Watrigant, qui encadré également Malory Marin sur le même sujet.
